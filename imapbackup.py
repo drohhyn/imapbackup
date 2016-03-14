@@ -366,32 +366,32 @@ def print_usage():
   """Prints usage, exits"""
   #     "                                                                               "
   print "Usage: imapbackup [OPTIONS] -s HOST -u USERNAME [-p PASSWORD]"
-  print " -a --append-to-mboxes     Append new messages to mbox files. (default)"
-  print " -y --yes-overwrite-mboxes Overwite existing mbox files instead of appending."
-  print " -n --compress=none        Use one plain mbox file for each folder. (default)"
-  print " -z --compress=gzip        Use mbox.gz files.  Appending may be very slow."
-  print " -b --compress=bzip2       Use mbox.bz2 files. Appending not supported: use -y."
-  print " -f --=folder              Specifify which folders use.  Comma separated list."
-  print " -e --ssl                  Use SSL.  Port defaults to 993."
-  print " -k KEY --key=KEY          PEM private key file for SSL.  Specify cert, too."
-  print " -c CERT --cert=CERT       PEM certificate chain for SSL.  Specify key, too."
-  print "                           Python's SSL module doesn't check the cert chain."
-  print " -s HOST --server=HOST     Address of server, port optional, eg. mail.com:143"
-  print " -u USER --user=USER       Username to log into server"
-  print " -p PASS --pass=PASS       Prompts for password if not specified."
-  print " --thunderbird             Create Mozilla Thunderbird compatible mailbox"
-  print " --nospinner               Disable spinner (makes output log-friendly)"
-  print "\nNOTE: mbox files are created in the current working directory."
+  print " -a --append-to-mboxes        Append new messages to mbox files. (default)"
+  print " -y --yes-overwrite-mboxes    Overwite existing mbox files instead of appending."
+  print " -n --compress=none           Use one plain mbox file for each folder. (default)"
+  print " -z --compress=gzip           Use mbox.gz files.  Appending may be very slow."
+  print " -b --compress=bzip2          Use mbox.bz2 files. Appending not supported: use -y."
+  print " -f --=folder                 Specifify which folders use.  Comma separated list."
+  print " -e --ssl                     Use SSL.  Port defaults to 993."
+  print " -k KEY --key=KEY             PEM private key file for SSL.  Specify cert, too."
+  print " -c CERT --cert=CERT          PEM certificate chain for SSL.  Specify key, too."
+  print "                              Python's SSL module doesn't check the cert chain."
+  print " -s HOST --server=HOST        Address of server, port optional, eg. mail.com:143"
+  print " -u USER --user=USER          Username to log into server"
+  print " -p PASS --pass=PASS          Prompts for password if not specified."
+  print " --thunderbird                Create Mozilla Thunderbird compatible mailbox"
+  print " --nospinner                  Disable spinner (makes output log-friendly)" 
+  print " -o OUTDIR --outputdir=OUTDIR Output directory (defaults to current working directory."
   sys.exit(2)
  
 def process_cline():
   """Uses getopt to process command line, returns (config, warnings, errors)"""
   # read command line
   try:
-    short_args = "aynzbek:c:s:u:p:f:"
+    short_args = "aynzbek:c:s:u:p:f:o:"
     long_args = ["append-to-mboxes", "yes-overwrite-mboxes", "compress=",
                  "ssl", "keyfile=", "certfile=", "server=", "user=", "pass=", 
-                 "folders=", "thunderbird", "nospinner"]
+                 "folders=", "thunderbird", "nospinner", "outputdir="]
     opts, extraargs = getopt.getopt(sys.argv[1:], short_args, long_args)
   except getopt.GetoptError:
     print_usage()
@@ -441,6 +441,8 @@ def process_cline():
       config['thunderbird'] = True
     elif option == "--nospinner":
       config['nospinner'] = True
+    elif option in ("-o", "--outputdir"):
+      config['outputdir'] = value
     else:
       errors.append("Unknown option: " + option)
  
@@ -581,6 +583,7 @@ def main():
   """Main entry point"""
   try:
     config = get_config()
+    os.chdir(config.get('outputdir', os.getcwd()))
     server = connect_and_login(config)
     names = get_names(server, config['compress'], config['thunderbird'],
                       config['nospinner'])
