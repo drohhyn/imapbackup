@@ -39,7 +39,7 @@ __contributors__ = "Bob Ippolito, Michael Leonhard, Giuseppe Scrivano <gscrivano
 # - Support host:port
 # - Cleaned up code using PyLint to identify problems
 #   pylint -f html --indent-string="  " --max-line-length=90 imapbackup.py > report.html
-import getpass, os, gc, sys, time, platform, getopt
+import getpass, os, gc, sys, time, datetime, platform, getopt
 import mailbox, imaplib, socket
 import re, hashlib, gzip, bz2
 
@@ -532,7 +532,11 @@ def connect_and_login(config):
   """Connects to the server and logs in.  Returns IMAP4 object."""
   try:
     assert(not (('keyfilename' in config) ^ ('certfilename' in config)))
- 
+    
+    now = datetime.datetime.now()
+
+    print str(now)
+  
     if config['usessl'] and 'keyfilename' in config:
       print "Connecting to '%s' TCP port %d," % (config['server'], config['port']),
       print "SSL, key from %s," % (config['keyfilename']),
