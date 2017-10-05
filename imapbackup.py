@@ -1,12 +1,13 @@
 #!/usr/bin/env python
  
 """IMAP Incremental Backup Script"""
-__version__ = "1.4f"
-__author__ = "Rui Carmo (http://the.taoofmac.com)"
-__copyright__ = "(C) 2006-2013 Rui Carmo. Code under MIT License.(C)"
-__contributors__ = "Bob Ippolito, Michael Leonhard, Giuseppe Scrivano <gscrivano@gnu.org>, Ronan Sheth, Brandon Long, Christian Schanz, A. Bovett"
+__version__ = "1.4g"
+__author__ = "Rui Carmo (http://taoofmac.com)"
+__copyright__ = "(C) 2006-2017 Rui Carmo. Code under MIT License.(C)"
+__contributors__ = "jwagnerhki, Bob Ippolito, Michael Leonhard, Giuseppe Scrivano <gscrivano@gnu.org>, Ronan Sheth, Brandon Long, Christian Schanz, A. Bovett"
  
 # = Contributors =
+# http://github.com/jwagnerhki: fix for message_id checks
 # A. Bovett: Modifications for Thunderbird compatibility and disabling spinner in Windows
 #  Christian Schanz: added target directory parameter
 # Brandon Long (Gmail team): Reminder to use BODY.PEEK instead of BODY
@@ -610,7 +611,7 @@ def main():
         fil_messages = scan_file(filename, config['compress'],
                                  config['overwrite'], config['nospinner'])
         new_messages = {}
-        for msg_id in fol_messages:
+        for msg_id in fol_messages.keys():
           if msg_id not in fil_messages:
             new_messages[msg_id] = fol_messages[msg_id]
  
